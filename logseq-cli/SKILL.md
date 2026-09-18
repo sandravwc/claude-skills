@@ -147,6 +147,40 @@ The user writes these pages as personal shorthand/memory-jogs, not documentation
 - Anti-pattern: retry the same tag association command after a tag association failure without checking tag state.
 - Correct usage: verify the tag exists and is public; create it first when needed with `upsert tag --name "<TagName>"`.
 
+## Stop hook: session-log prompt
+
+This workstation has a Claude Code **Stop hook** wired in `~/.claude/settings.json` that fires when a session ends. It does *not* write to Logseq itself — an LLM can't reliably tell trivial edits from things worth journaling, so it defers to the user.
+
+- Script: `hooks/logseq-stop-log.sh` in this repo, installed at `~/.claude/hooks/logseq-stop-log.sh`.
+- Behavior: once per session, if any tool was used, it blocks the Stop (`{"decision":"block","reason":...}`) so the assistant asks the user (via `AskUserQuestion`) whether to log a note to today's journal page, and what to write. Declining or "skip" ends it there — nothing is written without explicit go-ahead.
+- Dedup: touches a marker file at `~/.cache/claude-code-logseq-stop/<session_id>` so it only blocks once per session (also checks the hook's own `stop_hook_active` flag to avoid looping).
+
+Install on a new machine:
+
+```sh
+mkdir -p ~/.claude/hooks
+cp hooks/logseq-stop-log.sh ~/.claude/hooks/logseq-stop-log.sh
+chmod +x ~/.claude/hooks/logseq-stop-log.sh
+```
+
+Then merge this into `~/.claude/settings.json` (merge into existing `hooks.Stop`, don't overwrite):
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/logseq-stop-log.sh", "timeout": 15 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Needs `jq` on PATH. Requires opening `/hooks` once (or restarting Claude Code) after first install so the settings watcher picks up the new hooks directory.
+
 ## Tips
 
 - `query list` returns both built-ins and `custom-queries` from `cli.edn`.
