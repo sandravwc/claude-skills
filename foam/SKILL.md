@@ -32,10 +32,16 @@ with Read/Write/Edit/Grep/Glob, the same as any other files in a repo.
   H1`, then the filename, if absent. Keep it where the migration set it
   (the page name, with a real `/` for what used to be a namespace) rather
   than stripping it.
-- Tags: `tags: [...]` frontmatter (what the migration carried over from
-  Logseq's classes) and inline `#tag` are both real, live Foam features —
-  indexed and browsable via the Tag Explorer sidebar panel, not just inert
-  metadata. Use them the same way Logseq tags were used.
+- Tags: `tags: [...]` frontmatter and inline `#tag` are real, live Foam
+  features — indexed and browsable via the Tag Explorer sidebar panel, not
+  inert metadata. Foam renders each tag as its own graph node, so **never
+  give a page a tag that's the same string as a category/directory it's
+  already filed under** (e.g. don't tag `cheat sheet/jq.md` with `cheat
+  sheet`) — that produces a tag-node and a note-node with an identical
+  label, which look like duplicate/broken graph nodes. The migration did
+  exactly this at first and it had to be undone (see `MIGRATION-REVIEW.md`).
+  Directory placement already is the category; only add a tag for something
+  that genuinely cuts across categories.
 - No namespace feature: unlike OG Logseq, Foam does not auto-generate an
   index/hierarchy page per category. The directory tree (VS Code's file
   explorer) is the only built-in substitute. The flat `[[category/x]]` link
