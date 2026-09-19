@@ -19,8 +19,12 @@ edits, Read/Write/Edit/Grep on the files directly is still the normal path.
 
 ## This workstation's setup
 
-- Vault: `~/workdir/notes`, a git repo (`git init` on 2026-09-19, no remote
-  configured yet — `git push` will fail until one is added).
+- Vault: `~/workdir/notes`, a git repo with a **public** GitHub remote
+  (`origin`, `sandravwc/notes`, branch `master`). Every write to the vault
+  ends with `git add -A && git commit && git push`, no separate ask needed
+  — the user expects the repo in sync. Because it is public, grep the diff
+  for secrets, tokens, passwords, public IPs and real account names before
+  the push (the no-company-specifics rule below applies doubly).
 - This vault replaced a Logseq **DB-version** graph (migrated 2026-09-19,
   because Logseq's DB version broke git-diffable sync and namespace display).
   `MIGRATION-REVIEW.md` in the vault root documents what did and didn't carry
@@ -124,6 +128,25 @@ pages this assistant wrote):
 - When genericizing a real command (per the no-company-specifics rule
   above), swap the real value for a placeholder and move on — don't add a
   sentence about why it was swapped.
+
+## End of every session: rundown, not just the journal
+
+After any session with real work, do a pass over what was learned and split
+it into the right places, then tell the user in a short list what was
+written where:
+
+- `journal/<today>.md`: what happened, outcomes, todos, lessons — the
+  narrative of the day.
+- Own page per reusable technique: anything that would help on a different
+  project (a build recipe, an API quirk, a debugging path, a platform
+  limitation) goes on its own page in the right category directory, linked
+  from the category hub and from the project page that produced it. The
+  project page then links there instead of repeating the recipe.
+- Existing pages: if today corrected or extended something already noted,
+  edit that page rather than adding a parallel one.
+
+Then commit and push (see vault setup). Print the rundown as a bullet list:
+page path, one clause what went there.
 
 ## Typical asks and how to serve them
 
