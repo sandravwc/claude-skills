@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Stop hook: don't auto-write to Logseq (LLM can't reliably judge trivial vs. worth-logging).
+# Stop hook: don't auto-write to the notes vault (LLM can't reliably judge trivial vs. worth-logging).
 # Instead, once per session, if any tool was used, block the stop so the assistant
 # asks the human whether/what to log. ponytail: gate is "any tool call happened" —
 # cheapest signal that distinguishes a real session from a one-line Q&A, nothing fancier.
@@ -13,7 +13,7 @@ stop_hook_active="$(jq -r '.stop_hook_active // false' <<<"$input")"
 [ -n "$session_id" ] && [ -n "$transcript" ] && [ -f "$transcript" ] || exit 0
 [ "$stop_hook_active" = "true" ] && exit 0
 
-marker_dir="$HOME/.cache/claude-code-logseq-stop"
+marker_dir="$HOME/.cache/claude-code-foam-stop"
 marker="$marker_dir/$session_id"
 [ -f "$marker" ] && exit 0
 
@@ -25,14 +25,7 @@ files="$(jq -r 'select(.type=="assistant") | .message.content[]? | select(.type=
 mkdir -p "$marker_dir"
 touch "$marker"
 
-day="$(date +%-d)"
-case "$day" in
-  1|21|31) suffix=st ;;
-  2|22) suffix=nd ;;
-  3|23) suffix=rd ;;
-  *) suffix=th ;;
-esac
-page="$(date +%b) ${day}${suffix}, $(date +%Y)"
+journal_file="$HOME/workdir/notes/journal/$(date +%Y-%m-%d).md"
 
 if [ -n "$files" ]; then
   files_note="Files touched: $(paste -sd', ' <<<"$files")."
@@ -42,7 +35,7 @@ fi
 
 reason=$(cat <<EOF
 This session used tools. $files_note
-Ask the user (AskUserQuestion) whether to add a note to today's Logseq journal page "$page", offering: skip (trivial), or log with a short summary they confirm/edit. Do not decide trivial-vs-worth-logging yourself, and do not write to Logseq without their explicit go-ahead. Match the terse personal-shorthand style from the logseq-cli skill (SKILL.md) if they say yes.
+Ask the user (AskUserQuestion) whether to add a note to today's journal file "$journal_file", offering: skip (trivial), or log with a short summary they confirm/edit. Do not decide trivial-vs-worth-logging yourself, and do not write to the vault without their explicit go-ahead. Match the terse personal-shorthand style from the foam skill (SKILL.md) if they say yes.
 EOF
 )
 
