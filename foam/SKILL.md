@@ -28,9 +28,20 @@ with Read/Write/Edit/Grep/Glob, the same as any other files in a repo.
 - Journal: one file per day at `journal/YYYY-MM-DD.md`, frontmatter
   `date: YYYY-MM-DD`. Journal entries are reference material (often TODO-style
   progress notes), not scratch — don't discard existing entries.
-- Page frontmatter: `title:` (the page name, with a real `/` for what used to
-  be a namespace) and, where it existed in Logseq, `tags: [...]` — carried
-  over as plain metadata only, there's no tag-query system behind it here.
+- Page frontmatter: `title:` is optional — Foam falls back to the first `#
+  H1`, then the filename, if absent. Keep it where the migration set it
+  (the page name, with a real `/` for what used to be a namespace) rather
+  than stripping it.
+- Tags: `tags: [...]` frontmatter (what the migration carried over from
+  Logseq's classes) and inline `#tag` are both real, live Foam features —
+  indexed and browsable via the Tag Explorer sidebar panel, not just inert
+  metadata. Use them the same way Logseq tags were used.
+- No namespace feature: unlike OG Logseq, Foam does not auto-generate an
+  index/hierarchy page per category. The directory tree (VS Code's file
+  explorer) is the only built-in substitute. The flat `[[category/x]]` link
+  lists on hub pages like `cheat sheet.md` are manual holdovers from
+  Logseq's namespace view — they will not stay in sync automatically, so
+  add a link there by hand when adding a new file under that category.
 - Wikilinks: `[[category/page]]`, same syntax Logseq used. Foam resolves by
   path or unique basename and autocompletes on typing `[[`. A link to a page
   that doesn't exist yet renders as an unresolved placeholder — that's fine;
