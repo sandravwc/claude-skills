@@ -7,10 +7,15 @@ description: Operate this workstation's Foam notes vault (plain markdown files +
 
 ## Overview
 
-Foam is not a CLI or a database — it's a VS Code extension that adds wikilink
-autocomplete and backlinks on top of a plain directory of markdown files.
-There is no tool to shell out to: read, create, and edit vault files directly
-with Read/Write/Edit/Grep/Glob, the same as any other files in a repo.
+Foam is a VS Code extension that adds wikilink autocomplete and backlinks on
+top of a plain directory of markdown files. There's also an official `foam
+mcp` server (`foam-cli`, docs at docs.foam.md/tools/cli/mcp/) exposing the
+same graph — links, backlinks, tags, orphan/dead-end detection — as MCP
+tools. It's registered project-scoped for this vault (`.mcp.json`, read-only,
+no `--allow-writes`) — prefer its graph tools (`mcp__foam__*`, once
+approved/connected) over hand-rolled regex over `[[...]]` for anything
+graph-shaped (orphans, backlinks, dead links). For plain content reads and
+edits, Read/Write/Edit/Grep on the files directly is still the normal path.
 
 ## This workstation's setup
 
@@ -52,6 +57,17 @@ with Read/Write/Edit/Grep/Glob, the same as any other files in a repo.
   path or unique basename and autocompletes on typing `[[`. A link to a page
   that doesn't exist yet renders as an unresolved placeholder — that's fine;
   only create the target file once there's real content for it.
+- Every category directory needs a top-level `<category>.md` hub linking its
+  children (`[[category/x]]` list, same shape as `cheat sheet.md`), even one
+  with no body content of its own otherwise — without it, every file in that
+  directory is an orphan in Foam's graph (no auto namespace edges, see
+  above). Add the new page's link to the hub when creating one.
+- `.markdownlint.json` at the vault root turns off rules that fight this
+  vault's actual conventions (long real command lines, `<placeholder>`
+  genericization, Logseq's inline `### label` bullets read as headings) —
+  don't silence a *new* markdownlint warning by wrapping/reformatting real
+  content; check whether it's one of these known-intentional patterns first
+  and extend the config instead.
 - **Never write company-, client-, or employer-identifying specifics into
   this vault**: no real customer/client names, no internal hostnames/domains,
   no credentials/API keys/tokens, no employee names beyond the user
